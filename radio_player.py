@@ -5,7 +5,6 @@ import subprocess
 
 LIBRARY_FILE = "radio_library.json"
 
-# Default station to include
 DEFAULT_STATIONS = {
     "Radio Swiss Jazz": "https://stream.srg-ssr.ch/m/rsj/mp3_128"
 }
@@ -22,11 +21,18 @@ def save_library(library):
         json.dump(library, f, indent=4)
 
 def play_stream(url):
-    print(f"\nStarting stream: {url}\nPress CTRL+C to stop.\n")
+    os.system("clear")
+    print(f"Playing: {url}")
+    print("Press CTRL+C to return to menu.\n")
+
     try:
-        subprocess.run(["mpv", url])
+        subprocess.run(
+            ["mpv", "--no-terminal", "--really-quiet", url],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
     except KeyboardInterrupt:
-        print("\nStopped playback.")
+        pass
 
 def add_station(library):
     name = input("Station name: ").strip()
@@ -64,9 +70,10 @@ def main():
         print("1. Play Radio Swiss Jazz")
         print("2. Play a station from library")
         print("3. Add a new station")
-        print("4. Exit")
+        print("m. Menu")
+        print("q. Quit")
 
-        choice = input("Select an option: ").strip()
+        choice = input("Select an option: ").strip().lower()
 
         if choice == "1":
             play_stream(DEFAULT_STATIONS["Radio Swiss Jazz"])
@@ -74,7 +81,10 @@ def main():
             choose_station(library)
         elif choice == "3":
             add_station(library)
-        elif choice == "4":
+        elif choice == "m":
+            os.system("clear")
+            continue
+        elif choice == "q":
             print("Goodbye.")
             break
         else:
